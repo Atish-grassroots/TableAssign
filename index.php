@@ -48,12 +48,12 @@ if(!empty($_GET['status'])){
             <div class="col-auto">
                 <label for="fileInput" class="visually-hidden">File</label>
                 <input type="file" class="form-control" name="file" id="fileInput" />
+                
             </div>
             <div class="col-auto">
                 <input type="submit" class="btn btn-primary mb-3" name="importSubmit" value="Upload">
             </div>
-        </form>
-                        
+        </form>             
                 </div>
             </div>
         </div>
@@ -64,7 +64,8 @@ if(!empty($_GET['status'])){
         <form class="row g-3" action="importData.php" method="post" enctype="multipart/form-data">
             <div class="col-auto">
                 <label for="fileInput" class="visually-hidden">File</label>
-                <input type="file" class="form-control" name="file" id="fileInput" />
+                <input type="file" class="form-control" name="file" id="fileInput" onchange="updateSequence()" />
+                <!-- <input type="file" class="form-control" name="file" id="fileInput" /> -->
             </div>
             <div class="col-auto">
                 <input type="submit" class="btn btn-primary mb-3" name="importSubmit" value="Upload">
@@ -94,13 +95,15 @@ if(!empty($_GET['status'])){
         </thead>
         <tbody>
 
-        <?php
+<?php
 $sno = 1; 
 $counter = 0; 
 
-if(isset($_POST['filename']) && !empty($_POST['filename'])) {
+if(isset($_POST['filename']) ) {
     $lastFileName = $_POST['filename'];
-    //echo($lastFileName);
+  //echo($lastFileName);
+ // $_SESSION['lastFileName'] = $_POST['filename'];
+    echo "lastFileName = " . $lastFileName;
 } else {
     $SQLSELECT = "SELECT filename FROM assign ORDER BY modified DESC LIMIT 1";
     $stmt = $conn->prepare($SQLSELECT);
@@ -152,9 +155,6 @@ if (isset($_POST['submit'])) {
     $stmt->execute();
     $result_set = $stmt->get_result();
 
-    if ($conn->error) {
-        die("SQL error: " . $conn->error);
-    }
 
     while($row = $result_set->fetch_assoc())
     {
@@ -173,7 +173,7 @@ if (isset($_POST['submit'])) {
 
         $sno++;
     }
-}else {
+} else {
 $SQLSELECT = "SELECT * FROM assign WHERE filename = ?";
 $stmt = $conn->prepare($SQLSELECT);
 $stmt->bind_param("s", $lastFileName);
@@ -202,15 +202,20 @@ while($row = $result_set->fetch_assoc())
 
 }
 ?>
-
+<!-- $stmt = $conn->prepare("CALL UpdateAssignAndFileInfo(?, ?)");
+$stmt->bind_param("ss", $_POST['sequence'], $lastFileName);
+$stmt->execute(); -->
 
 </table>
 </div>
-<div class="col-md-4 d-flex justify-content-center " >
+<div class="col-md-4 d-flex justify-content-center">
 <div>
     <form class="row g-3" method="post">
-    <textarea id="sequence" name="sequence" title="Enter your sequence here, separated by commas" placeholder="Enter sequence separated by comma" rows="12" cols="50"></textarea>        
-    <input type="hidden" name="filename" id="filename">
+    <!-- <input type="hidden" name="filename" value="<?php echo isset($_GET['filename']) ? $_GET['filename'] : ''; ?>"> -->
+    <textarea id="sequence" name="sequence" title="Enter your sequence here, separated by commas" placeholder="Enter sequence separated by comma" rows="12" cols="50"><?php echo isset($_POST['sequence']) ? $_POST['sequence'] : ''; ?></textarea>        
+    <!-- <input type="hidden" name="filename" id="filename"> -->
+   
+    <!-- <input type="file" class="form-control" name="file" id="fileInput" onchange="updateSequence()" /> -->
         <input type="submit" name="submit" title="Click to submit your sequence" value="Submit">
     </form>
     </div>
@@ -221,9 +226,9 @@ while($row = $result_set->fetch_assoc())
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -280,12 +285,54 @@ while($row = $result_set->fetch_assoc())
                 ]       
             });
             $.post(window.location.href, {filename: filename});
-            console.log(filename);
+           // console.log(filename);
         }
     });
 });
 
 
+// $('form').on('submit', function(e) {
+//     e.preventDefault();
+
+//     var sequence = $('#sequence').val(); 
+//     var filename = $('#filename').val(); 
+
+//     $.ajax({
+//         url: 'updateSequence.php', 
+//         type: 'post',
+//         data: {sequence: sequence, filename: filename},
+//         success: function(response) {
+//             // Handle the response from the server
+//             console.log(response);
+
+//             // Assuming response is an array of objects where each object represents a row in the table
+//             var data = JSON.parse(response);
+
+//             // Clear the table body
+//             $("#example tbody").empty();
+
+//             // Add new rows to the table
+//             $.each(data, function(i, item) {
+//                 var row = $("<tr>");
+//                 row.append($("<td>").text(item.Sno));
+//                 row.append($("<td>").text(item.CallDate));
+//                 row.append($("<td>").text(item.DateData));
+//                 row.append($("<td>").text(item.AgentName));
+//                 row.append($("<td>").text(item.Phone));
+//                 row.append($("<td>").text(item.SentimentScore));
+//                 row.append($("<td>").text(item.Duration));
+//                 row.append($("<td>").text(item.AssignVal));
+//                 $("#example tbody").append(row);
+//             });
+//         }
+//     });
+// });
+
+
+// function submitForm(filename) {
+//     document.getElementById('filenameForm').filename.value = filename;
+//     document.getElementById('filenameForm').submit();
+// }
 $(document).ready(function() {
     if (!$.fn.DataTable.isDataTable('#example')) {
         table = $('#example').DataTable({
@@ -299,6 +346,47 @@ $(document).ready(function() {
             ]
         });
     }
+});
+
+function updateSequence() {
+       var fileInput = document.getElementById('fileInput');
+       var filename = fileInput.value.split('\\').pop();
+
+       // Make an AJAX call to update the sequence in the database
+       $.ajax({
+           url: 'updateSequence.php',
+           type: 'post',
+           data: { filename: filename },
+           success: function(response) {
+               // Handle the response from the server
+             console.log(response);
+           }
+       });
+   }
+
+
+
+var sequenceTextarea = document.getElementById('sequence');
+var storedSequence = sessionStorage.getItem('sequence');
+if (storedSequence) {
+    sequenceTextarea.value = storedSequence;
+}
+sequenceTextarea.addEventListener('input', function() {
+    sessionStorage.setItem('sequence', sequenceTextarea.value);
+});
+
+
+$('#filenameDropdown').change(function() {
+    var filename = $(this).val();
+
+    $.ajax({
+        url: 'setLastFileName.php',
+        type: 'post',
+        data: { filename: filename },
+        success: function(response) {
+            console.log(response);
+        }
+    });
 });
   </script>
 <?php include 'footer.php'; ?>

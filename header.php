@@ -56,6 +56,7 @@ $filenames = $result_set->fetch_all(MYSQLI_ASSOC);
           <li class="nav-item">
             <!-- <a class="nav-link disabled" href="#">Disabled</a> -->
           </li>
+          
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Files</a>
             <div class="dropdown-menu" aria-labelledby="dropdown01">
@@ -65,6 +66,18 @@ $filenames = $result_set->fetch_all(MYSQLI_ASSOC);
                 <?php endforeach; ?>
             </div>
           </li>
+          
+          <!-- <form id="filenameForm" method="POST" action="index.php">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Files</a>
+        <div class="dropdown-menu" aria-labelledby="dropdown01">
+            <?php foreach ($filenames as $file): ?>
+                <input type="hidden" name="filename" value="<?php echo urlencode($file['filename']); ?>">
+                <a class="dropdown-item" href="#" onclick="submitForm('<?php echo urlencode($file['filename']); ?>')"><?php echo $file['filename']; ?></a>
+            <?php endforeach; ?>
+        </div>
+    </li>
+</form> -->
         </ul>
       </div>
     </nav>
