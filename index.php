@@ -44,7 +44,7 @@ if(!empty($_GET['status'])){
             <div class="row">
                 <div class="col">
                         <!-- <a href="javascript:void(0);" class="btn btn-success" onclick="formToggle('importFrm');"><i class="plus"></i> Import Excel</a> -->
-                        <form class="row g-3" action="importData.php" method="post" enctype="multipart/form-data">
+            <form class="row g-3" action="importData.php" method="post" enctype="multipart/form-data">
             <div class="col-auto">
                 <label for="fileInput" class="visually-hidden">File</label>
                 <input type="file" class="form-control" name="file" id="fileInput" />
@@ -210,13 +210,13 @@ $stmt->execute(); -->
 </div>
 <div class="col-md-4 d-flex justify-content-center">
 <div>
-    <form class="row g-3" method="post">
+    <form id="myForm" class="row g-3" method="post">
     <!-- <input type="hidden" name="filename" value="<?php echo isset($_GET['filename']) ? $_GET['filename'] : ''; ?>"> -->
     <textarea id="sequence" name="sequence" title="Enter your sequence here, separated by commas" placeholder="Enter sequence separated by comma" rows="12" cols="50"><?php echo isset($_POST['sequence']) ? $_POST['sequence'] : ''; ?></textarea>        
-    <!-- <input type="hidden" name="filename" id="filename"> -->
+    <input type="hidden" name="filename" id="filename">
    
     <!-- <input type="file" class="form-control" name="file" id="fileInput" onchange="updateSequence()" /> -->
-        <input type="submit" name="submit" title="Click to submit your sequence" value="Submit">
+        <input type="submit" id="mySubmit" name="submit" title="Click to submit your sequence" value="Submit">
     </form>
     </div>
 </div>
@@ -249,7 +249,6 @@ $stmt->execute(); -->
         success: function(response) {
             var data = JSON.parse(response);
             $('#sequence').val(data.sequence);
-
             if ($.fn.DataTable.isDataTable('#example')) {
                 $('#example').DataTable().destroy();
             }
@@ -291,42 +290,56 @@ $stmt->execute(); -->
 });
 
 
-// $('form').on('submit', function(e) {
-//     e.preventDefault();
+$('#myForm').on('submit', function(e) {
+    e.preventDefault();
 
-//     var sequence = $('#sequence').val(); 
-//     var filename = $('#filename').val(); 
+    var sequence = $('#sequence').val(); 
+    var filename = $('#filename').val(); 
 
-//     $.ajax({
-//         url: 'updateSequence.php', 
-//         type: 'post',
-//         data: {sequence: sequence, filename: filename},
-//         success: function(response) {
-//             // Handle the response from the server
-//             console.log(response);
+    $.ajax({
+        url: 'updateData.php', 
+        type: 'post',
+        data: {sequence: sequence, filename: filename},
+        success: function(response) {
+            // Handle the response from the server
+            var data = JSON.parse(response);
+            // Clear the table body
+            if ($.fn.DataTable.isDataTable('#example')) {
+                $('#example').DataTable().destroy();
+            }
 
-//             // Assuming response is an array of objects where each object represents a row in the table
-//             var data = JSON.parse(response);
+            $("#example tbody").empty();
 
-//             // Clear the table body
-//             $("#example tbody").empty();
-
-//             // Add new rows to the table
-//             $.each(data, function(i, item) {
-//                 var row = $("<tr>");
-//                 row.append($("<td>").text(item.Sno));
-//                 row.append($("<td>").text(item.CallDate));
-//                 row.append($("<td>").text(item.DateData));
-//                 row.append($("<td>").text(item.AgentName));
-//                 row.append($("<td>").text(item.Phone));
-//                 row.append($("<td>").text(item.SentimentScore));
-//                 row.append($("<td>").text(item.Duration));
-//                 row.append($("<td>").text(item.AssignVal));
-//                 $("#example tbody").append(row);
-//             });
-//         }
-//     });
-// });
+            // Add new rows to the table
+            var sno = 1;
+            $.each(data, function(i, item) {
+                var row = $("<tr>");
+                row.append($("<td>").text(sno++));
+                row.append($("<td>").text(item.Calldate));
+                row.append($("<td>").text(item.Datedata));
+                row.append($("<td>").text(item.Agentname));
+                row.append($("<td>").text(item.phone));
+                row.append($("<td>").text(item.Sentiment_Score));
+                row.append($("<td>").text(item.duration));
+                row.append($("<td>").text(item.assignval));
+                $("#example tbody").append(row);
+            });
+            $('#example').DataTable({
+                "paging": true,
+                "searching": true, 
+                "ordering": true,  
+                "info": true,
+                "dom": 'Bfrtip',  
+                "buttons": [
+                    'copyHtml5',
+                    'excelHtml5',
+                    'csvHtml5',
+                    'pdfHtml5'
+                ]       
+            });
+        }
+    });
+});
 
 
 // function submitForm(filename) {

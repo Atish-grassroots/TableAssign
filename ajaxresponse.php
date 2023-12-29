@@ -15,6 +15,7 @@ if (isset($_GET['filename'])) {
     {
         $data[] = $row;
     }
+   // $data = array('key' => 'value');
 
     echo json_encode($data);
 }
