@@ -1,10 +1,16 @@
 <?php
-session_start();
+include_once 'db.php'; 
 
-if (isset($_POST['filename'])) {
-    $_SESSION['lastFileName'] = $_POST['filename'];
-    echo "Last filename set successfully.";
+$SQLSELECT = "SELECT filename FROM assign ORDER BY modified DESC LIMIT 1";
+$stmt = $conn->prepare($SQLSELECT);
+$stmt->execute();
+$result_set = $stmt->get_result();
+$fetchResult = $result_set->fetch_assoc();
+if ($fetchResult !== null) {
+    $lastFileName = $fetchResult['filename'];
 } else {
-    echo "No filename provided.";
+    $lastFileName = '';
 }
+
+echo $lastFileName;  
 ?>
