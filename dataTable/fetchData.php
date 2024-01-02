@@ -1,11 +1,11 @@
 <?php 
 
-include_once 'db.php'; 
+include_once '../db/db_conn.php'; 
 
 $sno = 1; 
 $counter = 0; 
 
-$SQLSELECT = "SELECT filename FROM assign ORDER BY modified DESC LIMIT 1";
+$SQLSELECT = "SELECT filename FROM master ORDER BY modified DESC LIMIT 1";
 $stmt = $conn->prepare($SQLSELECT);
 $stmt->execute();
 $result_set = $stmt->get_result();
@@ -16,7 +16,7 @@ if ($fetchResult !== null) {
     $lastFileName = '';
 }
 
-$SQLSELECT = "SELECT * FROM assign WHERE filename = ?";
+$SQLSELECT = "SELECT * FROM master WHERE filename = ?";
 $stmt = $conn->prepare($SQLSELECT);
 $stmt->bind_param("s", $lastFileName);
 $stmt->execute();

@@ -1,6 +1,6 @@
 <?php 
 
-include_once 'db.php'; 
+include_once '../db/db_conn.php'; 
 
 require_once 'spreadsheet/vendor/autoload.php'; 
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx; 
@@ -37,15 +37,15 @@ if(isset($_POST['importSubmit'])){
                 $phone = $row[3]; 
                 $Sentiment_Score = $row[4]; 
                 $Duration = $row[5];
-                $status = $row[6]; 
+               
  
-                $prevQuery = "SELECT id FROM assign WHERE Calldate = '".$Calldate."' AND filename = '".$filename."'"; 
+                $prevQuery = "SELECT id FROM master WHERE Calldate = '".$Calldate."' AND filename = '".$filename."'"; 
                 $prevResult = $conn->query($prevQuery); 
                  
                 if($prevResult->num_rows > 0){ 
-                    $conn->query("UPDATE assign SET Calldate = '".$Calldate."', Datedata = '".$Datedata."', Agentname = '".$Agentname."', phone = '".$phone."', Sentiment_Score = '".$Sentiment_Score."', Duration = '".$Duration."', status = '".$status."', modified = NOW(), filename = '".$filename."' WHERE Agentname = '".$Agentname."' AND filename = '".$filename."'"); 
+                    $conn->query("UPDATE master SET Calldate = '".$Calldate."', Datedata = '".$Datedata."', Agentname = '".$Agentname."', phone = '".$phone."', Sentiment_Score = '".$Sentiment_Score."', Duration = '".$Duration."', modified = NOW(), filename = '".$filename."' WHERE Agentname = '".$Agentname."' AND filename = '".$filename."'"); 
                 }else{ 
-                    $conn->query("INSERT INTO assign (Calldate, Datedata, Agentname, phone, Sentiment_Score, Duration, status, created, modified, filename) VALUES ('".$Calldate."', '".$Datedata."', '".$Agentname."', '".$phone."', '".$Sentiment_Score."', '".$Duration."', '".$status."', NOW(), NOW(), '".$filename."')"); 
+                    $conn->query("INSERT INTO master (Calldate, Datedata, Agentname, phone, Sentiment_Score, Duration,  created, modified, filename) VALUES ('".$Calldate."', '".$Datedata."', '".$Agentname."', '".$phone."', '".$Sentiment_Score."', '".$Duration."', NOW(), NOW(), '".$filename."')"); 
                 } 
             } 
              

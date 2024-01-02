@@ -1,5 +1,5 @@
 <?php
-include_once 'db.php';
+include_once '../db/db_conn.php';
 
 if (isset($_POST['sequence']) && isset($_POST['filename'])) {
     $sequence = explode(',', $_POST['sequence']);
@@ -8,7 +8,7 @@ if (isset($_POST['sequence']) && isset($_POST['filename'])) {
     $lastFileName = urldecode($_POST['filename']);
     $counter = 0;
 
-    $SQLSELECT = "SELECT * FROM assign WHERE filename = ?";
+    $SQLSELECT = "SELECT * FROM master WHERE filename = ?";
     $stmt = $conn->prepare($SQLSELECT);
     $stmt->bind_param("s", $lastFileName);
     $stmt->execute();
@@ -18,7 +18,7 @@ if (isset($_POST['sequence']) && isset($_POST['filename'])) {
     while ($row = $result_set->fetch_assoc()) {
         $assignVal = $sequence[$counter % $sequenceLength];
 
-        $SQLUPDATE = "UPDATE assign SET assignval = ? WHERE id = ?";
+        $SQLUPDATE = "UPDATE master SET assignval = ? WHERE id = ?";
         $stmt = $conn->prepare($SQLUPDATE);
         $stmt->bind_param("si", $assignVal, $row['id']);
         $result = $stmt->execute();

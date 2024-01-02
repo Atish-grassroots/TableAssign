@@ -1,6 +1,6 @@
 <?php 
 
-include_once 'db.php'; 
+include_once '../db/db_conn.php'; 
 
 
 $SQLSELECT = "SELECT filename FROM file_info ORDER BY filename DESC LIMIT 15";
@@ -66,6 +66,7 @@ $filenames = $result_set->fetch_all(MYSQLI_ASSOC);
                 <?php endforeach; ?>
             </div>
           </li>
+        
           
           <!-- <form id="filenameForm" method="POST" action="index.php">
     <li class="nav-item dropdown">
@@ -79,5 +80,9 @@ $filenames = $result_set->fetch_all(MYSQLI_ASSOC);
     </li>
 </form> -->
         </ul>
+        <div class="ml-auto" style="display: flex; align-items: center;">
+    <h1 style="margin-right: 15px; color: white;"> <?php echo $_SESSION['name']; ?></h1>
+    <a href="../logout.php" style="float: right; background: #555; padding: 10px 15px; color: #fff; border-radius: 5px; margin-right: 10px; border: none; text-decoration: none;">Logout</a></div>
+    </div>
       </div>
     </nav>

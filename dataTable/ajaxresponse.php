@@ -1,10 +1,10 @@
 <?php
-include_once 'db.php'; 
+include_once '../db/db_conn.php'; 
 
 if (isset($_GET['filename'])) {
     $filename = urldecode($_GET['filename']);
 
-    $SQLSELECT = "SELECT a.*, f.* FROM assign AS a JOIN file_info AS f ON a.filename = f.filename WHERE a.filename = ?";
+    $SQLSELECT = "SELECT a.*, f.* FROM master AS a JOIN file_info AS f ON a.filename = f.filename WHERE a.filename = ?";
     $stmt = $conn->prepare($SQLSELECT);
     $stmt->bind_param("s", $filename);
     $stmt->execute();
